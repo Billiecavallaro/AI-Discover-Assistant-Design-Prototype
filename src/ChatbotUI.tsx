@@ -267,38 +267,38 @@ const generateAIResponse = (task: string): Promise<string> => {
   });
 };
 
-// Helper function to get performance tier
-const getPerformanceTier = (score: number): {
-  emoji: string;
-  message: string;
-  color: string;
-} => {
-  if (score >= 90) return {
-    emoji: '🔥',
-    message: "You're on fire!",
-    color: 'from-rose-500 via-orange-500 to-amber-500'
-  };
-  if (score >= 75) return {
-    emoji: '⚡',
-    message: 'Crushing it!',
-    color: 'from-purple-500 via-pink-500 to-rose-500'
-  };
-  if (score >= 60) return {
-    emoji: '✨',
-    message: 'Great progress!',
-    color: 'from-blue-500 via-cyan-500 to-teal-500'
-  };
-  if (score >= 40) return {
-    emoji: '💪',
-    message: 'Keep going!',
-    color: 'from-green-500 via-emerald-500 to-teal-500'
-  };
-  return {
-    emoji: '🌱',
-    message: 'Just getting started!',
-    color: 'from-indigo-500 via-purple-500 to-pink-500'
-  };
-};
+// Helper function to get performance tier (kept for future use)
+// const getPerformanceTier = (score: number): {
+//   emoji: string;
+//   message: string;
+//   color: string;
+// } => {
+//   if (score >= 90) return {
+//     emoji: '🔥',
+//     message: "You're on fire!",
+//     color: 'from-rose-500 via-orange-500 to-amber-500'
+//   };
+//   if (score >= 75) return {
+//     emoji: '⚡',
+//     message: 'Crushing it!',
+//     color: 'from-purple-500 via-pink-500 to-rose-500'
+//   };
+//   if (score >= 60) return {
+//     emoji: '✨',
+//     message: 'Great progress!',
+//     color: 'from-blue-500 via-cyan-500 to-teal-500'
+//   };
+//   if (score >= 40) return {
+//     emoji: '💪',
+//     message: 'Keep going!',
+//     color: 'from-green-500 via-emerald-500 to-teal-500'
+//   };
+//   return {
+//     emoji: '🌱',
+//     message: 'Just getting started!',
+//     color: 'from-indigo-500 via-purple-500 to-pink-500'
+//   };
+// };
 
 // @component: ChatbotUI
 export const ChatbotUI = () => {
@@ -560,6 +560,16 @@ export const ChatbotUI = () => {
     setShowSettings(false);
     setShowHelp(false);
     setShowAbout(false);
+    setShowMenu(false);
+    setIsAchievementsCollapsed(true);
+    
+    // Scroll to top of the main content area
+    setTimeout(() => {
+      const mainContent = document.querySelector('.flex-1.overflow-y-auto');
+      if (mainContent) {
+        mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, 100);
   };
 
   const handleClearChat = () => {
@@ -662,12 +672,11 @@ export const ChatbotUI = () => {
     setActiveReminders(activeReminders.filter(r => r.id !== reminderId));
   };
 
-  const performanceTier = getPerformanceTier(metrics.efficiencyScore);
   const unlockedAchievements = achievements.filter(a => a.unlockedAt);
 
   // @return
   return (
-    <div className="w-full h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 flex items-center justify-center p-4">
+    <div className="w-full min-h-screen bg-slate-50 flex items-center justify-center p-2 sm:p-4">
       <AnimatePresence mode="wait">
         {isChatbotOpen ? (
           <motion.div
@@ -687,18 +696,18 @@ export const ChatbotUI = () => {
                 duration: 0.2
               }
             }}
-            className={`bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 flex flex-col overflow-hidden transition-all duration-300 ${isExpanded ? 'w-full h-full max-w-none' : 'w-full max-w-2xl h-[90vh]'}`}
+            className={`bg-white/95 backdrop-blur-xl rounded-xl sm:rounded-2xl shadow-xl border border-slate-200/50 flex flex-col overflow-hidden transition-all duration-300 ${isExpanded ? 'w-full h-full max-w-none' : 'w-full max-w-2xl h-[95vh] sm:h-[90vh]'}`}
           >
             {/* Header */}
-            <div className="relative z-50 flex items-center justify-between px-6 py-4 border-b border-white/30 bg-gradient-to-r from-white/40 to-white/20 backdrop-blur-md">
+            <div className="relative z-50 flex items-center justify-between px-3 sm:px-6 py-3 sm:py-4 border-b border-slate-200/60 bg-white/80 backdrop-blur-sm">
               <button
                 onClick={handleGoHome}
-                className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent hover:from-orange-600 hover:to-amber-600 transition-all duration-300 cursor-pointer"
+                className="text-2xl sm:text-3xl font-bold text-slate-900 hover:text-slate-700 transition-colors duration-200 cursor-pointer"
                 aria-label="Go to home screen"
               >
                 GRaCe
               </button>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 sm:gap-2">
                 {/* Achievements Badge */}
                 {unlockedAchievements.length > 0 && (
                   <motion.button
@@ -729,10 +738,10 @@ export const ChatbotUI = () => {
                       scale: 1
                     }}
                     onClick={() => setShowRemindersManager(true)}
-                    className="relative p-2 hover:bg-orange-500/10 backdrop-blur-sm rounded-xl transition-all duration-300 border border-orange-200/30"
+                    className="relative p-2 hover:bg-slate-100 backdrop-blur-sm rounded-xl transition-all duration-200 border border-slate-200/60"
                     title="View reminders"
                   >
-                    <Bell className="w-5 h-5 text-orange-600" />
+                    <Bell className="w-5 h-5 text-slate-600" />
                     <span className="absolute -top-1 -right-1 bg-gradient-to-br from-orange-500 to-rose-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg border border-white/50">
                       {activeReminders.length}
                     </span>
@@ -766,7 +775,7 @@ export const ChatbotUI = () => {
                           scale: 0.95,
                           y: -10
                         }}
-                        className="fixed w-56 bg-white/95 backdrop-blur-xl rounded-xl shadow-2xl border border-white/30 overflow-hidden z-[9999]"
+                        className="fixed w-48 sm:w-56 bg-white/95 backdrop-blur-xl rounded-lg sm:rounded-xl shadow-2xl border border-white/30 overflow-hidden z-[9999]"
                         style={{
                           top: menuRef.current ? menuRef.current.getBoundingClientRect().bottom + 8 : 0,
                           right: menuRef.current ? window.innerWidth - menuRef.current.getBoundingClientRect().right : 0
@@ -778,24 +787,24 @@ export const ChatbotUI = () => {
                               setShowMenu(false);
                               setShowChatHistory(true);
                             }}
-                            className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-orange-50/50 transition-colors text-slate-700"
+                            className="w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-2.5 text-left hover:bg-slate-50 transition-colors text-slate-700"
                           >
-                            <History className="w-4 h-4 text-slate-600" />
-                            <span className="text-sm font-medium">Chat History</span>
+                            <History className="w-4 h-4 text-slate-600 flex-shrink-0" />
+                            <span className="text-xs sm:text-sm font-medium">Chat History</span>
                           </button>
                           <button
                             onClick={handleExportData}
-                            className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-orange-50/50 transition-colors text-slate-700"
+                            className="w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-2.5 text-left hover:bg-slate-50 transition-colors text-slate-700"
                           >
-                            <Download className="w-4 h-4 text-slate-600" />
-                            <span className="text-sm font-medium">Export Data</span>
+                            <Download className="w-4 h-4 text-slate-600 flex-shrink-0" />
+                            <span className="text-xs sm:text-sm font-medium">Export Data</span>
                           </button>
                           <button
                             onClick={handleClearChat}
-                            className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-red-50/50 transition-colors text-slate-700"
+                            className="w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-2.5 text-left hover:bg-red-50/50 transition-colors text-slate-700"
                           >
-                            <Trash2 className="w-4 h-4 text-red-600" />
-                            <span className="text-sm font-medium text-red-600">Clear Chat</span>
+                            <Trash2 className="w-4 h-4 text-red-600 flex-shrink-0" />
+                            <span className="text-xs sm:text-sm font-medium text-red-600">Clear Chat</span>
                           </button>
                           <div className="border-t border-slate-200/50 my-1"></div>
                           <button
@@ -803,30 +812,30 @@ export const ChatbotUI = () => {
                               setShowMenu(false);
                               setShowSettings(true);
                             }}
-                            className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-orange-50/50 transition-colors text-slate-700"
+                            className="w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-2.5 text-left hover:bg-slate-50 transition-colors text-slate-700"
                           >
-                            <Settings className="w-4 h-4 text-slate-600" />
-                            <span className="text-sm font-medium">Settings</span>
+                            <Settings className="w-4 h-4 text-slate-600 flex-shrink-0" />
+                            <span className="text-xs sm:text-sm font-medium">Settings</span>
                           </button>
                           <button
                             onClick={() => {
                               setShowMenu(false);
                               setShowHelp(true);
                             }}
-                            className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-orange-50/50 transition-colors text-slate-700"
+                            className="w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-2.5 text-left hover:bg-slate-50 transition-colors text-slate-700"
                           >
-                            <HelpCircle className="w-4 h-4 text-slate-600" />
-                            <span className="text-sm font-medium">Help & Support</span>
+                            <HelpCircle className="w-4 h-4 text-slate-600 flex-shrink-0" />
+                            <span className="text-xs sm:text-sm font-medium">Help & Support</span>
                           </button>
                           <button
                             onClick={() => {
                               setShowMenu(false);
                               setShowAbout(true);
                             }}
-                            className="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-orange-50/50 transition-colors text-slate-700"
+                            className="w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-2.5 text-left hover:bg-slate-50 transition-colors text-slate-700"
                           >
-                            <Info className="w-4 h-4 text-slate-600" />
-                            <span className="text-sm font-medium">About GRaCe</span>
+                            <Info className="w-4 h-4 text-slate-600 flex-shrink-0" />
+                            <span className="text-xs sm:text-sm font-medium">About GRaCe</span>
                           </button>
                         </div>
                       </motion.div>
@@ -852,7 +861,7 @@ export const ChatbotUI = () => {
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 overflow-y-auto px-6 py-8">
+            <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-4 sm:py-8">
               {showChatHistory ? (
                 // Chat History View
                 <motion.div
@@ -866,10 +875,10 @@ export const ChatbotUI = () => {
                   }}
                 >
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Chat History</h2>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Chat History</h2>
                     <button
                       onClick={() => setShowChatHistory(false)}
-                      className="text-sm text-orange-600 hover:text-orange-700 font-medium px-4 py-2 bg-white/60 backdrop-blur-sm rounded-xl border border-orange-200/50 hover:bg-white/80 transition-all duration-300"
+                      className="text-xs sm:text-sm text-slate-700 hover:text-slate-900 font-medium px-3 sm:px-4 py-1.5 sm:py-2 bg-white/60 backdrop-blur-sm rounded-lg sm:rounded-xl border border-slate-200/60 hover:bg-slate-50 transition-all duration-200"
                     >
                       Back to chat
                     </button>
@@ -937,10 +946,10 @@ export const ChatbotUI = () => {
                   }}
                 >
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Settings</h2>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Settings</h2>
                     <button
                       onClick={() => setShowSettings(false)}
-                      className="text-sm text-orange-600 hover:text-orange-700 font-medium px-4 py-2 bg-white/60 backdrop-blur-sm rounded-xl border border-orange-200/50 hover:bg-white/80 transition-all duration-300"
+                      className="text-xs sm:text-sm text-slate-700 hover:text-slate-900 font-medium px-3 sm:px-4 py-1.5 sm:py-2 bg-white/60 backdrop-blur-sm rounded-lg sm:rounded-xl border border-slate-200/60 hover:bg-slate-50 transition-all duration-200"
                     >
                       Back to chat
                     </button>
@@ -952,11 +961,11 @@ export const ChatbotUI = () => {
                       <div className="space-y-3">
                         <label className="flex items-center justify-between cursor-pointer">
                           <span className="text-sm text-slate-700">Reminder notifications</span>
-                          <input type="checkbox" defaultChecked className="w-4 h-4 text-orange-600 rounded focus:ring-orange-500" />
+                          <input type="checkbox" defaultChecked className="w-4 h-4 text-slate-600 rounded focus:ring-slate-500" />
                         </label>
                         <label className="flex items-center justify-between cursor-pointer">
                           <span className="text-sm text-slate-700">Achievement notifications</span>
-                          <input type="checkbox" defaultChecked className="w-4 h-4 text-orange-600 rounded focus:ring-orange-500" />
+                          <input type="checkbox" defaultChecked className="w-4 h-4 text-slate-600 rounded focus:ring-slate-500" />
                         </label>
                       </div>
                     </div>
@@ -966,11 +975,11 @@ export const ChatbotUI = () => {
                       <div className="space-y-3">
                         <label className="flex items-center justify-between cursor-pointer">
                           <span className="text-sm text-slate-700">Animations</span>
-                          <input type="checkbox" defaultChecked className="w-4 h-4 text-orange-600 rounded focus:ring-orange-500" />
+                          <input type="checkbox" defaultChecked className="w-4 h-4 text-slate-600 rounded focus:ring-slate-500" />
                         </label>
                         <label className="flex items-center justify-between cursor-pointer">
                           <span className="text-sm text-slate-700">Compact mode</span>
-                          <input type="checkbox" className="w-4 h-4 text-orange-600 rounded focus:ring-orange-500" />
+                          <input type="checkbox" className="w-4 h-4 text-slate-600 rounded focus:ring-slate-500" />
                         </label>
                       </div>
                     </div>
@@ -980,7 +989,7 @@ export const ChatbotUI = () => {
                       <div className="space-y-3">
                         <button
                           onClick={handleExportData}
-                          className="w-full px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-orange-500 hover:to-amber-500 text-white text-sm font-medium rounded-lg transition-all duration-300"
+                          className="w-full px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium rounded-lg transition-all duration-200"
                         >
                           Export All Data
                         </button>
@@ -1011,10 +1020,10 @@ export const ChatbotUI = () => {
                   }}
                 >
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Help & Support</h2>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Help & Support</h2>
                     <button
                       onClick={() => setShowHelp(false)}
-                      className="text-sm text-orange-600 hover:text-orange-700 font-medium px-4 py-2 bg-white/60 backdrop-blur-sm rounded-xl border border-orange-200/50 hover:bg-white/80 transition-all duration-300"
+                      className="text-xs sm:text-sm text-slate-700 hover:text-slate-900 font-medium px-3 sm:px-4 py-1.5 sm:py-2 bg-white/60 backdrop-blur-sm rounded-lg sm:rounded-xl border border-slate-200/60 hover:bg-slate-50 transition-all duration-200"
                     >
                       Back to chat
                     </button>
@@ -1023,7 +1032,7 @@ export const ChatbotUI = () => {
                   <div className="space-y-6">
                     <div className="p-5 bg-white/40 backdrop-blur-md border border-white/30 rounded-xl">
                       <h3 className="text-lg font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                        <HelpCircle className="w-5 h-5 text-orange-600" />
+                        <HelpCircle className="w-5 h-5 text-slate-600" />
                         Getting Started
                       </h3>
                       <p className="text-sm text-slate-600 mb-3">
@@ -1060,7 +1069,7 @@ export const ChatbotUI = () => {
                       <p className="text-sm text-slate-600 mb-3">
                         If you need additional assistance, please contact our support team.
                       </p>
-                      <button className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-orange-500 hover:to-amber-500 text-white text-sm font-medium rounded-lg transition-all duration-300">
+                      <button className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium rounded-lg transition-all duration-200">
                         Contact Support
                       </button>
                     </div>
@@ -1079,10 +1088,10 @@ export const ChatbotUI = () => {
                   }}
                 >
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">About GRaCe</h2>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">About GRaCe</h2>
                     <button
                       onClick={() => setShowAbout(false)}
-                      className="text-sm text-orange-600 hover:text-orange-700 font-medium px-4 py-2 bg-white/60 backdrop-blur-sm rounded-xl border border-orange-200/50 hover:bg-white/80 transition-all duration-300"
+                      className="text-xs sm:text-sm text-slate-700 hover:text-slate-900 font-medium px-3 sm:px-4 py-1.5 sm:py-2 bg-white/60 backdrop-blur-sm rounded-lg sm:rounded-xl border border-slate-200/60 hover:bg-slate-50 transition-all duration-200"
                     >
                       Back to chat
                     </button>
@@ -1090,7 +1099,7 @@ export const ChatbotUI = () => {
 
                   <div className="space-y-6">
                     <div className="text-center py-8">
-                      <div className="text-6xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent mb-4">
+                      <div className="text-6xl font-bold text-slate-900 mb-4">
                         GRaCe
                       </div>
                       <p className="text-lg text-slate-600 mb-2">Your AI Assistant</p>
@@ -1121,10 +1130,10 @@ export const ChatbotUI = () => {
                     <div className="p-5 bg-white/40 backdrop-blur-md border border-white/30 rounded-xl">
                       <h3 className="text-lg font-semibold text-slate-900 mb-3">Built With</h3>
                       <div className="flex flex-wrap gap-2">
-                        <span className="px-3 py-1 bg-orange-100/50 text-orange-700 text-xs font-medium rounded-lg">React</span>
-                        <span className="px-3 py-1 bg-orange-100/50 text-orange-700 text-xs font-medium rounded-lg">TypeScript</span>
-                        <span className="px-3 py-1 bg-orange-100/50 text-orange-700 text-xs font-medium rounded-lg">Framer Motion</span>
-                        <span className="px-3 py-1 bg-orange-100/50 text-orange-700 text-xs font-medium rounded-lg">Tailwind CSS</span>
+                        <span className="px-3 py-1 bg-slate-100 text-slate-700 text-xs font-medium rounded-lg">React</span>
+                        <span className="px-3 py-1 bg-slate-100 text-slate-700 text-xs font-medium rounded-lg">TypeScript</span>
+                        <span className="px-3 py-1 bg-slate-100 text-slate-700 text-xs font-medium rounded-lg">Framer Motion</span>
+                        <span className="px-3 py-1 bg-slate-100 text-slate-700 text-xs font-medium rounded-lg">Tailwind CSS</span>
                       </div>
                     </div>
                   </div>
@@ -1143,14 +1152,14 @@ export const ChatbotUI = () => {
                 >
                   <div className="flex items-center justify-between mb-6">
                     <div>
-                      <h2 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Achievements</h2>
+                      <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Achievements</h2>
                       <p className="text-slate-600 text-sm mt-1">
                         {unlockedAchievements.length} of {achievements.length} unlocked
                       </p>
                     </div>
                     <button
                       onClick={() => setShowAchievements(false)}
-                      className="text-sm text-orange-600 hover:text-orange-700 font-medium px-4 py-2 bg-white/60 backdrop-blur-sm rounded-xl border border-orange-200/50 hover:bg-white/80 transition-all duration-300"
+                      className="text-xs sm:text-sm text-slate-700 hover:text-slate-900 font-medium px-3 sm:px-4 py-1.5 sm:py-2 bg-white/60 backdrop-blur-sm rounded-lg sm:rounded-xl border border-slate-200/60 hover:bg-slate-50 transition-all duration-200"
                     >
                       Back to chat
                     </button>
@@ -1264,10 +1273,10 @@ export const ChatbotUI = () => {
                   }}
                 >
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">Manage Reminders</h2>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Manage Reminders</h2>
                     <button
                       onClick={() => setShowRemindersManager(false)}
-                      className="text-sm text-orange-600 hover:text-orange-700 font-medium px-4 py-2 bg-white/60 backdrop-blur-sm rounded-xl border border-orange-200/50 hover:bg-white/80 transition-all duration-300"
+                      className="text-xs sm:text-sm text-slate-700 hover:text-slate-900 font-medium px-3 sm:px-4 py-1.5 sm:py-2 bg-white/60 backdrop-blur-sm rounded-lg sm:rounded-xl border border-slate-200/60 hover:bg-slate-50 transition-all duration-200"
                     >
                       Back to chat
                     </button>
@@ -1332,8 +1341,8 @@ export const ChatbotUI = () => {
                       delay: 0.1
                     }}
                   >
-                    <h2 className="text-4xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent mb-2">Billie,</h2>
-                    <h3 className="text-4xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent mb-8">How can I help?</h3>
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-2">Billie,</h2>
+                    <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-6 sm:mb-8">How can I help?</h3>
                   </motion.div>
 
                   {/* Gamification Metrics Tile */}
@@ -1353,7 +1362,7 @@ export const ChatbotUI = () => {
                       type: 'spring',
                       stiffness: 200
                     }}
-                    className="relative mb-8 p-4 rounded-2xl bg-gradient-to-br from-amber-400/20 via-orange-400/20 to-rose-400/20 backdrop-blur-lg border-2 border-orange-300/50 shadow-xl shadow-orange-500/10 overflow-hidden"
+                          className="relative mb-8 p-5 rounded-xl bg-slate-50/60 backdrop-blur-sm border border-slate-200/60 shadow-sm overflow-hidden"
                   >
                     {/* Celebration overlay */}
                     <AnimatePresence>
@@ -1368,7 +1377,7 @@ export const ChatbotUI = () => {
                           exit={{
                             opacity: 0
                           }}
-                          className="absolute inset-0 flex items-center justify-center bg-orange-500/20 backdrop-blur-sm z-10"
+                          className="absolute inset-0 flex items-center justify-center bg-slate-200/30 backdrop-blur-sm z-10"
                         >
                           <motion.div
                             initial={{
@@ -1388,7 +1397,7 @@ export const ChatbotUI = () => {
                               stiffness: 200
                             }}
                           >
-                            <Sparkles className="w-12 h-12 text-orange-600" />
+                            <Sparkles className="w-12 h-12 text-slate-600" />
                           </motion.div>
                         </motion.div>
                       )}
@@ -1400,7 +1409,7 @@ export const ChatbotUI = () => {
                           onClick={() => setIsAchievementsCollapsed(!isAchievementsCollapsed)}
                           className="flex items-center gap-2 hover:opacity-80 transition-opacity"
                         >
-                          <Trophy className="w-5 h-5 text-orange-600" />
+                          <Trophy className="w-5 h-5 text-slate-600" />
                           <h3 className="text-slate-900 text-lg font-bold">
                             Achievements
                           </h3>
@@ -1419,7 +1428,7 @@ export const ChatbotUI = () => {
                         {!isAchievementsCollapsed && (
                           <button
                             onClick={() => setShowAchievements(true)}
-                            className="flex items-center gap-1 px-3 py-1.5 bg-white/60 hover:bg-white/80 backdrop-blur-sm rounded-lg border border-orange-300/50 transition-all duration-300 group"
+                            className="flex items-center gap-1 px-3 py-1.5 bg-white/60 hover:bg-slate-50 backdrop-blur-sm rounded-lg border border-slate-200/60 transition-all duration-200 group"
                           >
                             <span className="text-slate-700 text-xs font-medium">View All</span>
                             <ChevronRight className="w-3 h-3 text-slate-500 group-hover:translate-x-0.5 transition-transform" />
@@ -1447,15 +1456,15 @@ export const ChatbotUI = () => {
                               duration: 0.3
                             }}
                           >
-                            <div className="grid grid-cols-4 gap-3 pt-2">
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 pt-2">
                               <motion.div
                                 whileHover={{
-                                  scale: 1.05
+                                  scale: 1.02
                                 }}
-                                className="bg-white/60 backdrop-blur-md rounded-xl p-3 border border-orange-300/50 shadow-lg hover:shadow-xl transition-all duration-300"
+                                className="bg-white/80 backdrop-blur-sm rounded-lg p-3 border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-200"
                               >
                                 <div className="flex items-center gap-1.5 mb-1">
-                                  <Target className="w-4 h-4 text-orange-600" />
+                                  <Target className="w-4 h-4 text-slate-600" />
                                   <p className="text-slate-700 text-xs font-medium">Tasks</p>
                                 </div>
                                 <motion.p
@@ -1476,12 +1485,12 @@ export const ChatbotUI = () => {
 
                               <motion.div
                                 whileHover={{
-                                  scale: 1.05
+                                  scale: 1.02
                                 }}
-                                className="bg-white/60 backdrop-blur-md rounded-xl p-3 border border-orange-300/50 shadow-lg hover:shadow-xl transition-all duration-300"
+                                className="bg-white/80 backdrop-blur-sm rounded-lg p-3 border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-200"
                               >
                                 <div className="flex items-center gap-1.5 mb-1">
-                                  <Zap className="w-4 h-4 text-orange-600" />
+                                  <Zap className="w-4 h-4 text-slate-600" />
                                   <p className="text-slate-700 text-xs font-medium">Saved</p>
                                 </div>
                                 <motion.p
@@ -1503,12 +1512,12 @@ export const ChatbotUI = () => {
 
                               <motion.div
                                 whileHover={{
-                                  scale: 1.05
+                                  scale: 1.02
                                 }}
-                                className="bg-white/60 backdrop-blur-md rounded-xl p-3 border border-orange-300/50 shadow-lg hover:shadow-xl transition-all duration-300"
+                                className="bg-white/80 backdrop-blur-sm rounded-lg p-3 border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-200"
                               >
                                 <div className="flex items-center gap-1.5 mb-1">
-                                  <TrendingUp className="w-4 h-4 text-orange-600" />
+                                  <TrendingUp className="w-4 h-4 text-slate-600" />
                                   <p className="text-slate-700 text-xs font-medium">Score</p>
                                 </div>
                                 <motion.p
@@ -1530,12 +1539,12 @@ export const ChatbotUI = () => {
 
                               <motion.div
                                 whileHover={{
-                                  scale: 1.05
+                                  scale: 1.02
                                 }}
-                                className="bg-white/60 backdrop-blur-md rounded-xl p-3 border border-orange-300/50 shadow-lg hover:shadow-xl transition-all duration-300"
+                                className="bg-white/80 backdrop-blur-sm rounded-lg p-3 border border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-200"
                               >
                                 <div className="flex items-center gap-1.5 mb-1">
-                                  <Star className="w-4 h-4 text-orange-600" />
+                                  <Star className="w-4 h-4 text-slate-600" />
                                   <p className="text-slate-700 text-xs font-medium">Streak</p>
                                 </div>
                                 <motion.p
@@ -1578,16 +1587,16 @@ export const ChatbotUI = () => {
                           delay: 0.3 + index * 0.05
                         }}
                         onClick={() => handleQuickAction(action)}
-                        className="w-full text-left px-5 py-4 bg-white/50 backdrop-blur-md hover:bg-white/70 rounded-2xl transition-all duration-300 hover:shadow-xl border border-white/30 hover:border-orange-300/50 group hover:scale-[1.02]"
+                        className="w-full text-left px-4 sm:px-5 py-3 sm:py-3.5 bg-white/60 backdrop-blur-sm hover:bg-slate-50/80 rounded-lg sm:rounded-xl transition-all duration-200 hover:shadow-sm border border-slate-200/60 hover:border-slate-300/80 group"
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="text-orange-600 group-hover:scale-110 transition-transform duration-300">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <div className="text-slate-600 group-hover:text-slate-700 transition-colors duration-200 flex-shrink-0">
                             {action.icon}
                           </div>
-                          <div className="flex-1">
-                            <p className="font-semibold text-slate-900">{action.title}</p>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-slate-900 text-sm sm:text-base">{action.title}</p>
                             {action.description && (
-                              <p className="text-sm text-slate-600 mt-0.5">{action.description}</p>
+                              <p className="text-xs sm:text-sm text-slate-600 mt-0.5 line-clamp-1">{action.description}</p>
                             )}
                           </div>
                           {action.id === 'reminders' && activeReminders.length > 0 && (
@@ -1604,13 +1613,13 @@ export const ChatbotUI = () => {
                   {showTaskBuilder && (
                     <>
                       {/* Visual Separator */}
-                      <div className="relative my-8">
+                      <div className="relative my-6">
                         <div className="absolute inset-0 flex items-center">
-                          <div className="w-full border-t border-orange-300/50"></div>
+                          <div className="w-full border-t border-slate-200/60"></div>
                         </div>
                         <div className="relative flex justify-center">
-                          <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 px-4 py-1 rounded-full border border-orange-200/50 shadow-sm backdrop-blur-sm">
-                            <span className="text-xs font-semibold text-orange-600 uppercase tracking-wider">Build a Task</span>
+                          <div className="bg-white/90 px-3 py-1 rounded-full border border-slate-200/60 shadow-sm">
+                            <span className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Build a Task</span>
                           </div>
                         </div>
                       </div>
@@ -1627,16 +1636,16 @@ export const ChatbotUI = () => {
                         transition={{
                           delay: 0.6
                         }}
-                        className="mb-6 pt-2 bg-gradient-to-b from-transparent via-orange-50/20 to-transparent rounded-2xl px-4 py-6 -mx-4"
+                        className="mb-6 pt-4 bg-slate-50/50 rounded-xl px-5 py-6 -mx-4 border-t border-slate-200/40"
                       >
                         {/* Task Category Grid */}
-                      <div className="grid grid-cols-3 gap-6 mb-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6">
                         {taskCategories.map((category, catIndex) => (
                           <div key={category.id} className="space-y-3">
-                            <p className="text-xs font-bold text-slate-500 mb-2 tracking-wide text-center">
+                            <p className="text-xs font-bold text-slate-500 mb-2 sm:mb-3 tracking-wide text-center">
                               {category.title}
                             </p>
-                            <div className="space-y-2">
+                            <div className="space-y-1.5 sm:space-y-2">
                               {category.items.map((item, itemIndex) => {
                                 const isSelected = isTaskItemSelected(category.id, item.id);
                                 return (
@@ -1654,12 +1663,12 @@ export const ChatbotUI = () => {
                                       delay: 0.7 + catIndex * 0.1 + itemIndex * 0.02
                                     }}
                                     onClick={() => handleTaskClick(category.id, item)}
-                                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all duration-300 group backdrop-blur-md ${isSelected ? 'bg-gradient-to-r from-amber-500 to-orange-500 border-orange-400 shadow-xl shadow-orange-500/30 scale-105 border-2' : 'bg-white/50 border border-white/40 hover:border-orange-300/50 hover:bg-white/70 hover:shadow-lg'}`}
+                                    className={`w-full flex items-center gap-2 sm:gap-2.5 px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg transition-all duration-200 group ${isSelected ? 'bg-slate-800 border-slate-800 shadow-sm border-2 text-white' : 'bg-white/70 border border-slate-200/60 hover:border-slate-300/70 hover:bg-slate-50/80 hover:shadow-sm'}`}
                                   >
-                                    <span className={`text-lg transition-transform duration-300 flex-shrink-0 ${isSelected ? 'scale-110' : 'group-hover:scale-110'}`}>
+                                    <span className={`text-base sm:text-lg transition-transform duration-300 flex-shrink-0 ${isSelected ? 'scale-110' : 'group-hover:scale-110'}`}>
                                       {item.icon}
                                     </span>
-                                    <span className={`text-sm font-medium text-left ${isSelected ? 'text-white' : 'text-slate-700 group-hover:text-orange-700'}`}>
+                                    <span className={`text-xs sm:text-sm font-medium text-left ${isSelected ? 'text-white' : 'text-slate-700 group-hover:text-slate-900'}`}>
                                       {item.label}
                                     </span>
                                   </motion.button>
@@ -1686,11 +1695,11 @@ export const ChatbotUI = () => {
                               opacity: 0,
                               height: 0
                             }}
-                            className="p-5 bg-gradient-to-br from-amber-400/30 via-orange-400/30 to-rose-400/30 backdrop-blur-lg rounded-2xl border-2 border-gradient-to-r from-orange-300 to-amber-300 shadow-2xl shadow-orange-500/20"
+                            className="p-3 sm:p-5 bg-slate-50/70 backdrop-blur-sm rounded-lg sm:rounded-xl border border-slate-200/60 shadow-sm"
                           >
                             {/* Selected Tasks Display */}
-                            <div className="flex items-center gap-2 flex-wrap mb-4">
-                              <span className="text-sm font-semibold text-slate-700">Your Task:</span>
+                            <div className="flex items-center gap-2 flex-wrap mb-3 sm:mb-4">
+                              <span className="text-xs sm:text-sm font-semibold text-slate-700">Your Task:</span>
                               {selectedTasks.map(task => (
                                 <motion.div
                                   key={task.category}
@@ -1706,7 +1715,7 @@ export const ChatbotUI = () => {
                                     opacity: 0,
                                     scale: 0.8
                                   }}
-                                  className="flex items-center gap-2 px-3 py-1.5 bg-white/70 backdrop-blur-sm rounded-lg shadow-md border border-orange-300/50"
+                                  className="flex items-center gap-2 px-3 py-1.5 bg-white/70 backdrop-blur-sm rounded-lg shadow-sm border border-slate-200/60"
                                 >
                                   <span className="text-base">{task.item.icon}</span>
                                   <span className="text-sm font-medium text-slate-700">
@@ -1759,11 +1768,11 @@ export const ChatbotUI = () => {
                                         opacity: 0,
                                         scale: 0.8
                                       }}
-                                      className="flex items-center gap-2 px-3 py-2 bg-white/70 backdrop-blur-sm rounded-lg text-sm border border-orange-300/50 group"
+                                      className="flex items-center gap-2 px-3 py-2 bg-white/70 backdrop-blur-sm rounded-lg text-sm border border-slate-200/60 group"
                                     >
                                       {att.type === 'file' ? (
                                         <>
-                                          <Paperclip className="w-4 h-4 text-orange-600" />
+                                          <Paperclip className="w-4 h-4 text-slate-600" />
                                           <span className="text-slate-700 text-xs max-w-[120px] truncate">
                                             {att.name}
                                           </span>
@@ -1775,7 +1784,7 @@ export const ChatbotUI = () => {
                                         </>
                                       ) : (
                                         <>
-                                          <LinkIcon className="w-4 h-4 text-orange-600" />
+                                          <LinkIcon className="w-4 h-4 text-slate-600" />
                                           <span className="text-slate-700 text-xs max-w-[120px] truncate">
                                             {att.name}
                                           </span>
@@ -1805,7 +1814,7 @@ export const ChatbotUI = () => {
                                   }}
                                   className="mb-3"
                                 >
-                                  <div className="flex items-center gap-2 bg-white/70 backdrop-blur-sm rounded-xl px-4 py-2 border border-orange-300/50">
+                                  <div className="flex items-center gap-2 bg-white/70 backdrop-blur-sm rounded-xl px-4 py-2 border border-slate-200/60">
                                     <LinkIcon className="w-4 h-4 text-slate-500" />
                                     <input
                                       type="text"
@@ -1823,7 +1832,7 @@ export const ChatbotUI = () => {
                                     />
                                     <button
                                       onClick={handleAddLink}
-                                      className="px-3 py-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-orange-500 hover:to-amber-500 text-white text-xs font-medium rounded-lg transition-all duration-300 shadow-md"
+                                      className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-white text-xs font-medium rounded-lg transition-all duration-200 shadow-sm"
                                     >
                                       Add
                                     </button>
@@ -1842,8 +1851,8 @@ export const ChatbotUI = () => {
                             </AnimatePresence>
 
                             {/* Unified Input with Attachment Options and Send */}
-                            <div className="bg-white/70 backdrop-blur-md rounded-xl border-2 border-orange-300/50 overflow-hidden shadow-lg">
-                              <div className="flex items-center gap-2 px-4 py-3">
+                            <div className="bg-white/70 backdrop-blur-md rounded-lg sm:rounded-xl border border-slate-200/60 overflow-hidden shadow-sm">
+                              <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-4 py-2 sm:py-3">
                                 {/* Hidden file input */}
                                 <input
                                   ref={fileInputRef}
@@ -1857,44 +1866,44 @@ export const ChatbotUI = () => {
                                 {/* Attachment buttons */}
                                 <button
                                   onClick={() => fileInputRef.current?.click()}
-                                  className="p-2 hover:bg-orange-500/20 backdrop-blur-sm rounded-lg transition-all duration-300 group"
+                                  className="p-1.5 sm:p-2 hover:bg-slate-100 backdrop-blur-sm rounded-lg transition-all duration-200 group flex-shrink-0"
                                   title="Attach file"
                                   disabled={isProcessing}
                                 >
-                                  <Paperclip className="w-5 h-5 text-slate-600 group-hover:text-orange-600 transition-colors" />
+                                  <Paperclip className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 group-hover:text-slate-700 transition-colors" />
                                 </button>
 
                                 <button
                                   onClick={() => setShowLinkInput(!showLinkInput)}
-                                  className="p-2 hover:bg-orange-500/20 backdrop-blur-sm rounded-lg transition-all duration-300 group"
+                                  className="p-1.5 sm:p-2 hover:bg-slate-100 backdrop-blur-sm rounded-lg transition-all duration-200 group flex-shrink-0"
                                   title="Add link"
                                   disabled={isProcessing}
                                 >
-                                  <LinkIcon className="w-5 h-5 text-slate-600 group-hover:text-orange-600 transition-colors" />
+                                  <LinkIcon className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 group-hover:text-slate-700 transition-colors" />
                                 </button>
 
-                                <input
-                                  type="text"
-                                  value={inputValue}
-                                  onChange={e => setInputValue(e.target.value)}
-                                  onKeyPress={handleKeyPress}
-                                  placeholder="Add context for your task..."
-                                  className="flex-1 bg-transparent outline-none text-slate-900 placeholder:text-slate-500"
-                                  disabled={isProcessing}
-                                />
+                                  <input
+                                    type="text"
+                                    value={inputValue}
+                                    onChange={e => setInputValue(e.target.value)}
+                                    onKeyPress={handleKeyPress}
+                                    placeholder="Add context for your task..."
+                                    className="flex-1 bg-transparent outline-none text-slate-900 placeholder:text-slate-500 text-sm sm:text-base min-w-0"
+                                    disabled={isProcessing}
+                                  />
 
-                                <button
-                                  onClick={() => handleSendMessage()}
-                                  disabled={isProcessing}
-                                  className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-orange-500 hover:to-amber-500 text-white text-sm font-semibold rounded-xl transition-all duration-300 hover:shadow-xl shadow-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
-                                >
-                                  {isProcessing ? (
-                                    <Loader2 className="w-4 h-4 animate-spin" />
-                                  ) : (
-                                    <Send className="w-4 h-4" />
-                                  )}
-                                  Send
-                                </button>
+                                  <button
+                                    onClick={() => handleSendMessage()}
+                                    disabled={isProcessing}
+                                    className="px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 hover:shadow-sm shadow-sm flex items-center gap-1.5 sm:gap-2 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                                  >
+                                    {isProcessing ? (
+                                      <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" />
+                                    ) : (
+                                      <Send className="w-3 h-3 sm:w-4 sm:h-4" />
+                                    )}
+                                    <span className="hidden sm:inline">Send</span>
+                                  </button>
                               </div>
                             </div>
                           </motion.div>
@@ -1924,7 +1933,7 @@ export const ChatbotUI = () => {
                           }}
                           className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
-                          <div className={`max-w-[80%] px-5 py-3 rounded-2xl backdrop-blur-md border shadow-lg transition-all duration-300 ${message.role === 'user' ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white border-orange-300/50 shadow-orange-500/20' : 'bg-white/60 text-slate-900 border-white/40 shadow-slate-500/10'}`}>
+                          <div className={`max-w-[80%] px-4 py-2.5 rounded-xl border transition-all duration-200 ${message.role === 'user' ? 'bg-slate-800 text-white border-slate-700/50 shadow-sm' : 'bg-white/80 text-slate-900 border-slate-200/60 shadow-sm'}`}>
                             <p className="text-sm leading-relaxed">{message.content}</p>
 
                             {/* Attachments Display */}
@@ -1933,7 +1942,7 @@ export const ChatbotUI = () => {
                                 {message.attachments.map(att => (
                                   <div
                                     key={att.id}
-                                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs backdrop-blur-sm ${message.role === 'user' ? 'bg-orange-400/30 border border-white/30' : 'bg-slate-200/50 border border-slate-300/30'}`}
+                                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs backdrop-blur-sm ${message.role === 'user' ? 'bg-slate-700/30 border border-white/30' : 'bg-slate-200/50 border border-slate-300/30'}`}
                                   >
                                     {att.type === 'file' ? (
                                       <>
@@ -2043,8 +2052,8 @@ export const ChatbotUI = () => {
                         }}
                         className="flex justify-start"
                       >
-                        <div className="px-5 py-3 rounded-2xl bg-white/60 backdrop-blur-md border border-white/40 flex items-center gap-2 shadow-lg">
-                          <Loader2 className="w-4 h-4 animate-spin text-orange-600" />
+                        <div className="px-4 py-2.5 rounded-xl bg-white/80 backdrop-blur-sm border border-slate-200/60 flex items-center gap-2 shadow-sm">
+                          <Loader2 className="w-4 h-4 animate-spin text-slate-600" />
                           <p className="text-sm text-slate-700">GRaCe is working on your task...</p>
                         </div>
                       </motion.div>
@@ -2057,7 +2066,7 @@ export const ChatbotUI = () => {
 
             {/* Input Footer */}
             {(messages.length > 0 || (messages.length === 0 && selectedTasks.length === 0)) && !showRemindersManager && !showAchievements && !showChatHistory && !showSettings && !showHelp && !showAbout && (
-              <div className="px-6 py-4 border-t border-white/30 bg-gradient-to-r from-white/40 to-white/20 backdrop-blur-md">
+              <div className="px-3 sm:px-6 py-3 sm:py-4 border-t border-slate-200/60 bg-white/80 backdrop-blur-sm">
                 {/* Attachments Preview - Home Screen */}
                 {messages.length === 0 && attachments.length > 0 && (
                   <AnimatePresence>
@@ -2095,7 +2104,7 @@ export const ChatbotUI = () => {
                         >
                           {att.type === 'file' ? (
                             <>
-                              <Paperclip className="w-4 h-4 text-orange-600" />
+                              <Paperclip className="w-4 h-4 text-slate-600" />
                               <span className="text-slate-700 text-xs max-w-[120px] truncate">
                                 {att.name}
                               </span>
@@ -2107,7 +2116,7 @@ export const ChatbotUI = () => {
                             </>
                           ) : (
                             <>
-                              <LinkIcon className="w-4 h-4 text-orange-600" />
+                                          <LinkIcon className="w-4 h-4 text-slate-600" />
                               <span className="text-slate-700 text-xs max-w-[120px] truncate">
                                 {att.name}
                               </span>
@@ -2180,7 +2189,7 @@ export const ChatbotUI = () => {
                 )}
 
                 {/* Main Input */}
-                <div className="flex items-center gap-3 bg-white/60 backdrop-blur-md rounded-2xl px-4 py-3 focus-within:ring-2 focus-within:ring-orange-400/50 focus-within:bg-white/70 transition-all duration-300 border border-white/40 shadow-lg">
+                <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-orange-400/30 focus-within:bg-white transition-all duration-200 border border-slate-200/60 shadow-sm">
                   {/* Hidden file input */}
                   <input
                     ref={fileInputRef}
@@ -2194,20 +2203,20 @@ export const ChatbotUI = () => {
                   {/* Attachment buttons */}
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="p-2 hover:bg-white/60 backdrop-blur-sm rounded-lg transition-all duration-300 group"
+                    className="p-1.5 sm:p-2 hover:bg-slate-100 backdrop-blur-sm rounded-lg transition-all duration-200 group flex-shrink-0"
                     title="Attach file"
                     disabled={isProcessing}
                   >
-                    <Paperclip className="w-5 h-5 text-slate-600 group-hover:text-orange-600 transition-colors" />
+                    <Paperclip className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 group-hover:text-slate-700 transition-colors" />
                   </button>
 
                   <button
                     onClick={() => setShowLinkInput(!showLinkInput)}
-                    className="p-2 hover:bg-white/60 backdrop-blur-sm rounded-lg transition-all duration-300 group"
+                    className="p-1.5 sm:p-2 hover:bg-slate-100 backdrop-blur-sm rounded-lg transition-all duration-200 group flex-shrink-0"
                     title="Add link"
                     disabled={isProcessing}
                   >
-                    <LinkIcon className="w-5 h-5 text-slate-600 group-hover:text-orange-600 transition-colors" />
+                    <LinkIcon className="w-4 h-4 sm:w-5 sm:h-5 text-slate-600 group-hover:text-slate-700 transition-colors" />
                   </button>
 
                   <input
@@ -2216,18 +2225,18 @@ export const ChatbotUI = () => {
                     onChange={e => setInputValue(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder={placeholderText}
-                    className="flex-1 bg-transparent outline-none text-slate-900 placeholder:text-slate-500"
+                    className="flex-1 bg-transparent outline-none text-slate-900 placeholder:text-slate-500 text-sm sm:text-base min-w-0"
                     disabled={isProcessing}
                   />
                   <button
                     onClick={() => handleSendMessage()}
                     disabled={!inputValue.trim() || isProcessing}
-                    className="p-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-orange-500 hover:to-amber-500 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg hover:scale-105"
+                    className="p-1.5 sm:p-2 bg-slate-800 hover:bg-slate-700 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-sm flex-shrink-0"
                   >
                     {isProcessing ? (
-                      <Loader2 className="w-5 h-5 text-white animate-spin" />
+                      <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 text-white animate-spin" />
                     ) : (
-                      <Send className="w-5 h-5 text-white" />
+                      <Send className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                     )}
                   </button>
                 </div>
@@ -2250,12 +2259,12 @@ export const ChatbotUI = () => {
               scale: 0.8
             }}
             onClick={handleReopen}
-            className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-500 hover:from-orange-500 hover:to-amber-500 rounded-full shadow-2xl border-2 border-white/30 backdrop-blur-md flex items-center justify-center transition-all duration-300 hover:scale-110 group relative"
+            className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-amber-500 to-orange-500 hover:from-orange-500 hover:to-amber-500 rounded-full shadow-xl border-2 border-white/30 backdrop-blur-md flex items-center justify-center transition-all duration-300 hover:scale-110 group relative z-50"
             aria-label="Open chatbot"
           >
-            <Sparkles className="w-7 h-7 text-white group-hover:rotate-12 transition-transform" />
+            <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 text-white group-hover:rotate-12 transition-transform" />
             {activeReminders.length > 0 && (
-              <span className="absolute -top-1 -right-1 bg-white text-orange-600 text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center border-2 border-orange-500 shadow-lg">
+              <span className="absolute -top-1 -right-1 bg-white text-orange-600 text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center border-2 border-orange-500 shadow-sm">
                 {activeReminders.length}
               </span>
             )}

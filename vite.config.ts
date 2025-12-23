@@ -4,6 +4,6 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/AI-Discover-Assistant-Design-Prototype/',
+  base: process.env.NODE_ENV === 'production' ? '/AI-Discover-Assistant-Design-Prototype/' : '/',
 })
 
